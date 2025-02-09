@@ -1,22 +1,20 @@
 import ScorePanel from "./ScorePanel";
+import Snake from "./Snake";
 
 class GameControl {
-  snakeElement: HTMLElement; //比较灵活
+  snake: Snake; //实例调用
   foodElement: HTMLElement;
   scorePanel: ScorePanel; //实例调用，写死的数据
   direction: string = "ArrowRight"; // 设置默认方向
   timer: ReturnType<typeof setTimeout> | null = null;
   isLive: boolean = true; //默认游戏没有结束
 
-  constructor(snakeId: string, foodId: string, scorePanel: ScorePanel) {
-    this.snakeElement = document.getElementById(snakeId)!; //Id方式，后面可以比较灵活
+  constructor( foodId: string, scorePanel: ScorePanel) {
+    this.snake=new Snake(); //实例调用
     this.foodElement = document.getElementById(foodId)!;
     this.scorePanel = scorePanel;
 
-    // 确保蛇的 position 是 absolute，非常重要，不然蛇不会动
-    this.snakeElement.style.position = "absolute";
-    this.snakeElement.style.left = "50px"; //定义蛇在盒子里的初始位置
-    this.snakeElement.style.top = "50px";
+   
     this.init();
     // 监听游戏结束事件
     document.addEventListener("gameOver", () => {
@@ -41,8 +39,8 @@ class GameControl {
   }
 
   run() {
-    let X = this.snakeElement.offsetLeft;
-    let Y = this.snakeElement.offsetTop;
+    let X = this.snake.X;
+    let Y = this.snake.Y;
 
     switch (this.direction) {
       case "ArrowUp":
@@ -58,21 +56,42 @@ class GameControl {
         X += 10;
         break;
     }
+    //检查蛇是否吃到了食物
+    this.checkEat(X, Y);
+
     //检查是否撞墙
     if (X < 0 || X > 290 || Y < 0 || Y > 290) {
       alert("Game Over!");
       document.dispatchEvent(new Event("gameOver")); // 触发 gameOver 事件
       return;
     }
-    
-    this.snakeElement.style.left = `${X}px`;
-    this.snakeElement.style.top = `${Y}px`;
+
+    this.snake.X = X;
+    this.snake.Y = Y;
     if (!this.isLive) return;
     // 让 `run` 持续运行，速度根据得分级别调整run的速度
     this.timer = setTimeout(
       () => this.run(),
       300 - (this.scorePanel.level - 1) * 30
     );
+  }
+  //定义一个方法，用来检测蛇是否吃到了食物
+  checkEat(X: number, Y: number) {
+    if (X === this.foodElement.offsetLeft && Y === this.foodElement.offsetTop) {
+      this.scorePanel.addScore();
+      this.changeFoodPosition(); // 让食物随机生成新的位置
+      this.snake.addBody();
+    }
+  }
+  
+  //定义一个方法，用来让食物随机生成新的位置
+  changeFoodPosition() {
+    const maxX = 290;
+    const maxY = 290;
+    const newX = Math.floor(Math.random() * (maxX / 10)) * 10;
+    const newY = Math.floor(Math.random() * (maxY / 10)) * 10;
+    this.foodElement.style.left = `${newX}px`;
+    this.foodElement.style.top = `${newY}px`;
   }
 }
 

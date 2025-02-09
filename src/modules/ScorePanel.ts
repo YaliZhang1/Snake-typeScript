@@ -18,10 +18,14 @@ class ScorePanel {
     upScore: number = 10 // The points needed to level up. The default value is 10.also you can change it by external call instantiation
   ) {
     //声明并定义了其属性类型
-    this.scoreEle = document.getElementById(scoreEleId)!;
-    this.levelEle = document.getElementById(levelEleId)!;
+    this.scoreEle = document.getElementById("score")!;
+    if (!this.scoreEle){
+      throw new Error(`Element with id "${scoreEleId}" not found.`);
+    }
+    this.levelEle = document.getElementById("level")!;
     this.maxLevel = maxLevel;
     this.upScore = upScore;
+   
   }
 
   addScore() {

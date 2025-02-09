@@ -28,6 +28,11 @@ body {
   border: 2px solid black;
   position: relative;
 }
+#main #stage #snake {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+}
 #main #stage #snake > div {
   width: 10px;
   height: 10px;
