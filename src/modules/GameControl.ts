@@ -13,7 +13,7 @@ class GameControl {
     this.snake=new Snake(); //实例调用
     this.foodElement = document.getElementById(foodId)!;
     this.scorePanel = scorePanel;
-
+    document.addEventListener("keydown", this.handleKeydown.bind(this));
    
     this.init();
     // 监听游戏结束事件
@@ -37,7 +37,22 @@ class GameControl {
     if (!validKeys.includes(event.key)) return;
     this.direction = event.key;
   }
-
+  handleKeydown(event: KeyboardEvent) {
+    switch (event.key) {
+      case "ArrowUp":
+        this.snake.setDirection("up");
+        break;
+      case "ArrowDown":
+        this.snake.setDirection("down");
+        break;
+      case "ArrowLeft":
+        this.snake.setDirection("left");
+        break;
+      case "ArrowRight":
+        this.snake.setDirection("right");
+        break;
+    }
+  }
   run() {
     let X = this.snake.X;
     let Y = this.snake.Y;
